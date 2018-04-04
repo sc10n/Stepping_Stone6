@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.lang.String;
 import java.util.Scanner;
@@ -53,13 +54,9 @@ public class SteppingStone6_RecipeBox {
 //    Print all recipe names in the list
     public void printAllRecipeNames() {
 
-        for (int i = 0; i < listOfRecipes.size(); i++) {
-
-            SteppingStone5_Recipe tmpRecipe2 = new SteppingStone5_Recipe();
-
-            tmpRecipe2 = listOfRecipes.get(i);
-
-            System.out.println(tmpRecipe2.getRecipeName());
+        for (int i = 0; i < listOfRecipes.size(); i++ ) {
+            int bulletNum = i + 1;
+            System.out.println("" + bulletNum + ". " + listOfRecipes.get(i).getRecipeName());
         }
     }
 
@@ -91,6 +88,7 @@ public class SteppingStone6_RecipeBox {
             System.out.println("1. Add a Recipe to the Box ");
             System.out.println("2. Print details of a Recipe ");
             System.out.println("3. List all Recipe Names in the Box ");
+            System.out.println("4. Exit");
             System.out.println(" ");
             System.out.println("Please make a selection.");
 
@@ -102,22 +100,67 @@ public class SteppingStone6_RecipeBox {
 //                Begin switch
                 switch (menuOption) {
                     case 1:
+//                        calls the add new recipe method
                         newRecipeBox.addNewRecipe();
                         break;
 
                     case 2:
-                        System.out.println("Which recipe?");
-//                        TODO: add logic for picking a recipe if list isnt empty
+
+//                        Only call the sub-menu if the array has items
+                        if (newRecipeBox.listOfRecipes.size() >= 1) {
+
+                                System.out.println("Which recipe would you like to see?");
+                                newRecipeBox.printAllRecipeNames();  // print a list of recipe names as a submenu
+                                int subMenuOption;
+
+                                if (menuScnr.hasNextInt()) {
+
+                                    subMenuOption = menuScnr.nextInt();
+
+//                                    Selects recipe for display by subtracting 1 from the menu number to get the index
+//                                    The selected recipe is passed as a parameter to the print details method.
+                                    newRecipeBox.printAllRecipeDetails(
+                                            newRecipeBox.listOfRecipes.get(subMenuOption - 1));
+
+                                    } else {
+
+//                                    Catches non-numbers and redirects back to the menu
+                                    System.out.println("Illegal option selected.");
+                                    menuScnr.next();
+                                }
+
+
+                        } else {
+//                            Catch for an empty array list of recipes.
+                            System.out.println("There are no recipes in the box, try adding some first.");
+                            Helpers.wipeScreen(); // Will wipe screen when ran from terminal outside the IDE
+                            break;
+                        }
 
                         break;
 
                     case 3:
-                        newRecipeBox.printAllRecipeNames();
-//                        TODO: format the list
+
+//                        Only show the list of recipes if there are actually recipes in the list.
+                        if (newRecipeBox.listOfRecipes.size() >= 1) {
+
+                            newRecipeBox.printAllRecipeNames();
+
+                        } else {
+//                            If there aren't any recipes in the list, wipe and return back to the menu
+                            System.out.println("There are no recipes in the box, try adding some first.");
+                            Helpers.wipeScreen(); // Will wipe screen when ran from terminal outside the IDE
+                            break;
+                        }
+                        break;
+
+                    case 4:
+                        menuActive = false; // Breaks the while loop to exit the program
                         break;
 
                     default:
-                        System.out.println("Illegal option selected.");
+                        System.out.println("Illegal option selected.");  // For all those non-numbers out there.
+                        break;
 
                 }
             } else {
